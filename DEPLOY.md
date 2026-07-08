@@ -16,9 +16,10 @@ You'll get a public URL like `https://solar-forecast-<random>.streamlit.app`.
 ## How it's set up for deployment
 - **Imports:** a small `sys.path` shim at the top of `app.py` makes the `src/`-layout package importable
   on Streamlit Cloud (no install step needed).
-- **Fast cold start:** the app ships a cached 2023 dataset (`sample_data/default_2023.csv`), so the
-  default view loads with **no network call** and trains in a few seconds. Other years fetch live from
-  Open-Meteo.
+- **Always current:** the app fetches a rolling recent window (last 12 months, ending ~2 days ago) live
+  from Open-Meteo on load and caches it for 24h, so the dashboard stays up to date automatically with
+  **no commits**. The first cold start takes a few seconds (fetch + train).
+- **Global:** a latitude/longitude picker lets it forecast for any location on Earth.
 - **Dependencies:** come from `requirements.txt` (now includes `streamlit`).
 
 ## After deploying
