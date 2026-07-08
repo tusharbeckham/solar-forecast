@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "solar-forecast"
+version = "0.0.1"
+description = "Physics-informed ML for solar PV output forecasting (PhysSolar)"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.1",
+    "scikit-learn>=1.4",
+    "matplotlib>=3.8",
+    "requests>=2.31",
+    "joblib>=1.3",
+]
+
+[project.optional-dependencies]
+physics = ["pvlib>=0.10"]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+solar-forecast = "solar_forecast.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

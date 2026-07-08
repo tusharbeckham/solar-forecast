@@ -1,0 +1,16 @@
+# Core dependencies (floors chosen for broad wheel availability, incl. Python 3.14)
+numpy>=1.26
+pandas>=2.1
+scikit-learn>=1.4
+matplotlib>=3.8
+requests>=2.31
+joblib>=1.3
+
+# Physics prior — better clear-sky model when available. Optional: physics.py falls back to a
+# self-contained solar-geometry + Haurwitz model if pvlib is not installed.
+pvlib>=0.10
+
+# Dev
+pytest>=8.0
+
+# NOTE: PyTorch is added in Phase 5 (PINN); intentionally not a core dependency yet.
