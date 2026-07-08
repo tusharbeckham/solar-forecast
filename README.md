@@ -9,7 +9,7 @@ sets the baseline, and machine learning learns only the weather-driven correctio
   <img alt="NumPy" src="https://img.shields.io/badge/NumPy-013243?logo=numpy&logoColor=white">
   <img alt="pandas" src="https://img.shields.io/badge/pandas-150458?logo=pandas&logoColor=white">
   <img alt="Streamlit" src="https://img.shields.io/badge/Streamlit-FF4B4B?logo=streamlit&logoColor=white">
-  <img alt="tests" src="https://img.shields.io/badge/tests-9%20passing-brightgreen?logo=pytest&logoColor=white">
+  <a href="https://github.com/tusharbeckham/solar-forecast/actions/workflows/tests.yml"><img alt="tests" src="https://github.com/tusharbeckham/solar-forecast/actions/workflows/tests.yml/badge.svg"></a>
   <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-blue">
 </p>
 
