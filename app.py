@@ -28,7 +28,7 @@ st.title("Solar-Forecast (PhysSolar)")
 st.caption("Physics-informed PV output forecast: a clear-sky physical prior + an ML residual model.")
 
 site = DEFAULT_SITE
-year = int(st.sidebar.number_input("Year", min_value=2020, max_value=2024, value=2023))
+year = int(st.sidebar.number_input("Year", min_value=2020, max_value=dt.date.today().year, value=2023))
 
 
 def _load_weather(year: int) -> pd.DataFrame:
@@ -38,7 +38,9 @@ def _load_weather(year: int) -> pd.DataFrame:
         df = pd.read_csv(sample, index_col=0)
         df.index = pd.to_datetime(df.index, utc=True)
         return df.sort_index()
-    return data.get_weather(site, f"{year}-01-01", f"{year}-12-31")
+    # Archive has a short lag; clamp the end to a couple days ago (handles the current, partial year).
+    last = min(dt.date(year, 12, 31), dt.date.today() - dt.timedelta(days=2))
+    return data.get_weather(site, f"{year}-01-01", last.isoformat())
 
 
 @st.cache_data(show_spinner="Preparing data + training model...")
