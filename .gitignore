@@ -19,6 +19,4 @@ data/*.csv
 .DS_Store
 Thumbs.db
 .vscode/
-
-# local editor / tooling config
-.kiro/
+.idea/

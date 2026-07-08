@@ -19,6 +19,7 @@ dependencies = [
 
 [project.optional-dependencies]
 physics = ["pvlib>=0.10"]
+dashboard = ["streamlit>=1.30"]
 dev = ["pytest>=8.0"]
 
 [project.scripts]
