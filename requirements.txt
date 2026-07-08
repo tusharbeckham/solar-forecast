@@ -6,6 +6,9 @@ matplotlib>=3.8
 requests>=2.31
 joblib>=1.3
 
+# Dashboard (Streamlit Community Cloud reads this file on deploy)
+streamlit>=1.30
+
 # Physics prior — better clear-sky model when available. Optional: physics.py falls back to a
 # self-contained solar-geometry + Haurwitz model if pvlib is not installed.
 pvlib>=0.10
