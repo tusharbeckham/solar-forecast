@@ -1,0 +1,16 @@
+name: keep-alive
+
+# Pings the deployed Streamlit app daily so it wakes and refreshes its data on its own
+# (no manual visits needed). Streamlit Community Cloud sleeps when idle; this keeps it warm.
+
+on:
+  schedule:
+    - cron: "0 6 * * *"     # daily at 06:00 UTC
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping the app
+        run: curl -sSL --max-time 90 https://solar-forecast.streamlit.app/ -o /dev/null || true

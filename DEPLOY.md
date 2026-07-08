@@ -19,7 +19,10 @@ You'll get a public URL like `https://solar-forecast-<random>.streamlit.app`.
 - **Always current:** the app fetches a rolling recent window (last 12 months, ending ~2 days ago) live
   from Open-Meteo on load and caches it for 24h, so the dashboard stays up to date automatically with
   **no commits**. The first cold start takes a few seconds (fetch + train).
-- **Global:** a latitude/longitude picker lets it forecast for any location on Earth.
+- **Per-visitor location:** the app asks each visitor's browser for their location (with a manual
+  fallback) and forecasts for *their* spot - no fixed default. Works on desktop and mobile.
+- **Auto-renew without visits:** a scheduled workflow (`.github/workflows/keep-alive.yml`) pings the
+  app daily so it wakes and refreshes its data even if no one opens it.
 - **Dependencies:** come from `requirements.txt` (now includes `streamlit`).
 
 ## After deploying
