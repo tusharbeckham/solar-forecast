@@ -9,6 +9,12 @@ physical prior:
 ## Residual target
   r_t = y_t - c_t .   Minimizing error on r is equivalent to minimizing it on y (c_t is known/fixed).
 
+## Plane-of-array (POA) transposition
+Panel-plane irradiance from horizontal components via an isotropic sky model:
+- cos(AOI) = cos(Z)cos(b) + sin(Z)sin(b)cos(gamma_s - gamma_p)   (b = tilt; gamma_s, gamma_p = solar/panel azimuth)
+- POA = DNI*max(cos(AOI), 0) + DHI*(1 + cos b)/2 + GHI*rho*(1 - cos b)/2   (rho = ground albedo)
+The PV prior uses POA (not raw GHI):  c_t = pv_power(POA_t, T_t).
+
 ## Loss functions (candidates)
 - MSE:  mean( (r - r_hat)^2 )    - smooth, default.
 - MAE:  mean( |r - r_hat| )      - robust to outliers.

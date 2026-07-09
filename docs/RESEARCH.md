@@ -6,6 +6,9 @@
   `temperature_2m`, `cloud_cover`, `wind_speed_10m`. Global reanalysis (ERA5), ~1940-present.
   **Verified working** by this repo's `data.py` (a live request returned the expected hourly arrays).
   Docs: https://open-meteo.com/en/docs/historical-weather-api
+- **Open-Meteo Forecast API** (no key). Endpoint: `https://api.open-meteo.com/v1/forecast`. Same hourly
+  variables with `past_days` + `forecast_days` -> recent + upcoming days; powers the live dashboard's
+  forward forecast.
 - **PVGIS** (EU JRC) - irradiation + PV output estimates:
   https://joint-research-centre.ec.europa.eu/pvgis-online-tool_en
 - **NREL NSRDB** - high-quality solar irradiance (API key required): https://nsrdb.nrel.gov/
