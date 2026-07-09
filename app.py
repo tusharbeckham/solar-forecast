@@ -25,6 +25,36 @@ from solar_forecast import data, features, models, physics  # noqa: E402
 from solar_forecast.config import DEFAULT_SITE  # noqa: E402
 
 st.set_page_config(page_title="Solar-Forecast", page_icon="☀️", layout="centered")
+
+st.markdown(
+    """
+    <style>
+    .sf-title {
+      background: linear-gradient(90deg, #F5A623, #FDB813, #FF8C42, #F5A623);
+      background-size: 300% 100%;
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
+      animation: sfShift 9s ease-in-out infinite;
+    }
+    @keyframes sfShift {
+      0%, 100% { background-position: 0% 50%; }
+      50%      { background-position: 100% 50%; }
+    }
+    div[data-testid="stMetric"] {
+      border: 1px solid rgba(245,166,35,0.18);
+      border-radius: 14px;
+      padding: 10px 16px;
+      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+    div[data-testid="stMetric"]:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(245,166,35,0.15);
+      border-color: rgba(245,166,35,0.42);
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 st.markdown(
     """
     <div style="display:flex; align-items:center; gap:14px; margin:0 0 2px;">
@@ -45,7 +75,7 @@ st.markdown(
           <animate attributeName="r" values="17;19.5;17" dur="3s" repeatCount="indefinite" />
         </circle>
       </svg>
-      <span style="font-size:2.1rem; font-weight:800; letter-spacing:-0.5px;">Solar-Forecast</span>
+      <span class="sf-title" style="font-size:2.1rem; font-weight:800; letter-spacing:-0.5px;">Solar-Forecast</span>
     </div>
     """,
     unsafe_allow_html=True,
