@@ -2,7 +2,7 @@
 
 - Location: from the visitor's browser (desktop + mobile); manual fallback.
 - Forward-looking: uses the Open-Meteo forecast feed (recent past + next days), so it shows actuals
-  up to now and the forecast into the future - not just historical days.
+  up to now and the forecast into the future.
 - Self-updating: fetches live and caches ~6h; a daily keep-alive workflow pings it too.
 
 Run locally:  pip install -e ".[dashboard]"  &&  streamlit run app.py
@@ -60,15 +60,15 @@ def load(lat: float, lon: float, tilt: float):
 
     Cached ~6h and keyed on inputs, so it refreshes a few times a day on its own.
     """
-    azimuth = 180.0 if lat >= 0 else 0.0                       # panels face the equator
+    azimuth = 180.0 if lat >= 0 else 0.0                        # panels face the equator
     site = replace(DEFAULT_SITE, latitude=lat, longitude=lon, tilt_deg=float(tilt),
                    azimuth_deg=azimuth, altitude_m=0.0, name=f"s_{lat:.2f}_{lon:.2f}")
-    df = data.get_forecast(site, past_days=92, forecast_days=7)  # recent past + 7 days ahead
+    df = data.get_forecast(site, past_days=92, forecast_days=7)  # ~3 months back + 7 days ahead
     feats = features.build(df, site)
     y = physics.observed_power(site, df).reindex(feats.index)
     clear = physics.clear_sky_power(site, feats.index, temp_c=feats["temp_c"]).reindex(feats.index)
     now = pd.Timestamp.now(tz="UTC")
-    train_mask = feats.index <= (now - pd.Timedelta(days=2))    # train only on settled past
+    train_mask = feats.index <= (now - pd.Timedelta(days=2))     # train only on settled past
     model = models.ResidualForecaster(site).fit(feats[train_mask], (y - clear)[train_mask])
     pred = pd.Series(np.asarray(model.predict(feats, clear), dtype=float), index=feats.index)
     return feats.index, y, clear, pred
@@ -82,21 +82,35 @@ except Exception as exc:  # network / API hiccup
 
 now = pd.Timestamp.now(tz="UTC")
 actual = y.copy()
-actual[idx > now] = np.nan                                     # no actuals in the future
+actual[idx > now] = np.nan                                      # no actuals in the future
 
-# --- 2. Forecast (recent days + the days ahead) ---
 st.subheader("2. Forecast")
-ahead = st.slider("Days ahead", 1, 7, 3)                       # view-only: reslices, no refetch
-start = now.floor("D") - pd.Timedelta(days=2)
-end = now.floor("D") + pd.Timedelta(days=ahead + 1)
-mask = (idx >= start) & (idx <= end)
 
-chart = pd.DataFrame(
-    {"actual (proxy)": actual[mask], "clear-sky": clear[mask], "forecast": pred[mask]},
-    index=idx[mask],
-)
-st.line_chart(chart)
-st.caption(
-    f"Location {lat:.3f}, {lon:.3f}. The 'actual' line stops at now "
-    f"({now:%Y-%m-%d %H:%M} UTC); the forecast continues into the future."
-)
+# Headline metrics for the next 24 hours
+nxt = pred[(idx > now) & (idx <= now + pd.Timedelta(hours=24))]
+if len(nxt):
+    c1, c2 = st.columns(2)
+    c1.metric("Next 24 h peak", f"{nxt.max():.0f} W")
+    c2.metric("Expected at", f"{nxt.idxmax():%a %H:%M} UTC")
+
+tab_ahead, tab_day = st.tabs(["📈 Days ahead", "📅 Pick a day"])
+
+with tab_ahead:
+    ahead = st.slider("Days ahead", 1, 7, 3)                    # view-only: reslices, no refetch
+    start = now.floor("D") - pd.Timedelta(days=2)
+    end = now.floor("D") + pd.Timedelta(days=ahead + 1)
+    m = (idx >= start) & (idx <= end)
+    st.line_chart(pd.DataFrame(
+        {"actual (proxy)": actual[m], "clear-sky": clear[m], "forecast": pred[m]}, index=idx[m]))
+    st.caption("The 'actual' line stops at now; the forecast continues into the future.")
+
+with tab_day:
+    dmin, dmax = idx.min().date(), idx.max().date()
+    pick = st.date_input("Pick a day", value=now.date(), min_value=dmin, max_value=dmax)
+    d0 = pd.Timestamp(pick, tz="UTC")
+    dm = (idx >= d0) & (idx < d0 + pd.Timedelta(days=1))
+    st.line_chart(pd.DataFrame(
+        {"actual (proxy)": actual[dm], "clear-sky": clear[dm], "forecast": pred[dm]}, index=idx[dm]))
+    st.caption(f"{pick}: hourly forecast vs actual vs clear-sky.  Available range: {dmin} to {dmax}.")
+
+st.caption(f"Location {lat:.3f}, {lon:.3f}  -  updated automatically from Open-Meteo.")
