@@ -25,7 +25,31 @@ from solar_forecast import data, features, models, physics  # noqa: E402
 from solar_forecast.config import DEFAULT_SITE  # noqa: E402
 
 st.set_page_config(page_title="Solar-Forecast", page_icon="☀️", layout="centered")
-st.title("☀️ Solar-Forecast")
+st.markdown(
+    """
+    <div style="display:flex; align-items:center; gap:14px; margin:0 0 2px;">
+      <svg width="46" height="46" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Solar-Forecast logo">
+        <g fill="none" stroke="#F5A623" stroke-width="6" stroke-linecap="round">
+          <line x1="50" y1="7"  x2="50" y2="21" />
+          <line x1="50" y1="79" x2="50" y2="93" />
+          <line x1="7"  y1="50" x2="21" y2="50" />
+          <line x1="79" y1="50" x2="93" y2="50" />
+          <line x1="18" y1="18" x2="28" y2="28" />
+          <line x1="72" y1="72" x2="82" y2="82" />
+          <line x1="18" y1="82" x2="28" y2="72" />
+          <line x1="72" y1="28" x2="82" y2="18" />
+          <animateTransform attributeName="transform" attributeType="XML" type="rotate"
+                            from="0 50 50" to="360 50 50" dur="16s" repeatCount="indefinite" />
+        </g>
+        <circle cx="50" cy="50" r="17" fill="#FDB813">
+          <animate attributeName="r" values="17;19.5;17" dur="3s" repeatCount="indefinite" />
+        </circle>
+      </svg>
+      <span style="font-size:2.1rem; font-weight:800; letter-spacing:-0.5px;">Solar-Forecast</span>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 st.write(
     "Physics-informed solar power forecast for **your location** - recent days plus the days ahead. "
     "It updates itself automatically from the global Open-Meteo feed."
