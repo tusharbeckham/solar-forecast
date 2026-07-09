@@ -23,7 +23,7 @@ the part clouds and temperature change. Final forecast = `clear_sky + residual(f
 - **Physics + ML hybrid** — a self-contained clear-sky irradiance model and plane-of-array (POA) transposition, corrected by a gradient-boosting residual model.
 - **Beats standard baselines on real data** — 0.85 skill vs the clear-sky prior and 0.69 vs a persistence baseline on a full year of hourly data.
 - **Honest evaluation** — leakage-free, forward-chaining backtest (train only on the past, test on the future).
-- **Reproducible** — one CLI for fetch / train / evaluate / plot / predict, a Streamlit dashboard, and a test suite.
+- **Reproducible** — one CLI (fetch / train / evaluate / plot / predict), a **live, location-aware dashboard** ([demo](https://solar-forecast.streamlit.app/)), and a 20-test suite.
 
 ## Why this approach
 Pure ML has to relearn physics it could simply be told. By encoding the sun's geometry and clear-sky
@@ -52,7 +52,7 @@ The residual model beats both standard baselines. Example day (forecast vs actua
 | ML | scikit-learn (gradient-boosted trees) |
 | Numerics / data | NumPy, pandas |
 | Physics | custom solar-geometry + clear-sky + isotropic POA (optional [pvlib](https://pvlib-python.readthedocs.io/)) |
-| Data source | [Open-Meteo](https://open-meteo.com/) archive API (free, keyless) |
+| Data source | [Open-Meteo](https://open-meteo.com/) archive + forecast APIs (free, keyless) |
 | Visualization | Matplotlib, Streamlit |
 | Tooling | pytest, packaging via `pyproject.toml`, a `solar-forecast` CLI |
 
@@ -65,7 +65,7 @@ weather (Open-Meteo)  ->  clear-sky physics prior  ->  features  ->  ML residual
 
 | Module | Role |
 |--------|------|
-| `data` | Open-Meteo archive fetch + local cache (GHI, direct/diffuse, temp, cloud, wind) |
+| `data` | Open-Meteo fetch + cache — historical **archive** (for backtesting) and live **forecast** (recent + upcoming days), for GHI, direct/diffuse, temp, cloud, wind |
 | `physics` | solar geometry, clear-sky irradiance, plane-of-array transposition + PV power model (the prior) |
 | `features` | clear-sky index, angle-of-incidence, time encodings, weather, lags (no look-ahead) |
 | `models` | baselines (clear-sky, persistence) + a gradient-boosting residual model |
@@ -92,9 +92,11 @@ solar-forecast predict  --start 2023-12-01 --end 2023-12-07   # predict a date r
 ```
 
 ### Dashboard
+A live, **location-aware** Streamlit demo — it asks for your location, pulls a rolling recent-plus-upcoming
+window from Open-Meteo, and refreshes daily. Try it: **[solar-forecast.streamlit.app](https://solar-forecast.streamlit.app/)**.
 ```powershell
 pip install streamlit
-streamlit run app.py             # pick a day -> forecast vs actual vs clear-sky
+streamlit run app.py             # your location -> recent days + forward forecast
 ```
 
 ## Roadmap
