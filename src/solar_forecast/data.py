@@ -7,6 +7,7 @@ import requests
 from .config import Site, RAW_DIR
 
 ARCHIVE_URL = "https://archive-api.open-meteo.com/v1/archive"
+FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
 
 # Open-Meteo hourly variables we request -> tidy internal names
 _VARS = {
@@ -70,3 +71,26 @@ def get_weather(site: Site, start: str, end: str, use_cache: bool = True) -> pd.
     df = parse_open_meteo(resp.json())
     df.to_csv(cache)
     return df
+
+
+
+def get_forecast(site: Site, past_days: int = 92, forecast_days: int = 7) -> pd.DataFrame:
+    """Recent-past + FUTURE hourly weather/irradiance from the Open-Meteo forecast API.
+
+    Returns a UTC-indexed hourly DataFrame (same columns as get_weather) spanning `past_days`
+    before today through `forecast_days` ahead - used for live, forward-looking forecasts.
+    """
+    params = {
+        "latitude": site.latitude,
+        "longitude": site.longitude,
+        "hourly": ",".join(_VARS.keys()),
+        "past_days": int(past_days),
+        "forecast_days": int(forecast_days),
+        "timezone": "UTC",
+    }
+    try:
+        resp = requests.get(FORECAST_URL, params=params, timeout=60)
+        resp.raise_for_status()
+    except requests.RequestException as exc:
+        raise RuntimeError(f"Open-Meteo forecast request failed ({exc}).") from exc
+    return parse_open_meteo(resp.json())
